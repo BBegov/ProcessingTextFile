@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessingTextFile", "..\ProcessingTextFile\ProcessingTextFile.csproj", "{C53A7A8D-052A-496D-BACE-D822D22B72C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFPDesktopUI", "TFPDesktopUI\TFPDesktopUI.csproj", "{64DDE83E-DC8C-4F9E-AB37-69A4DD7D3D3C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParsingLogic", "..\ParsingLogic\ParsingLogic.csproj", "{34208550-F7B9-4CD3-B123-304E4ED18488}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFPLibrary", "TFPLibrary\TFPLibrary.csproj", "{E9004F52-02E9-4A72-A0AF-F53C17DE0164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C53A7A8D-052A-496D-BACE-D822D22B72C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C53A7A8D-052A-496D-BACE-D822D22B72C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C53A7A8D-052A-496D-BACE-D822D22B72C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C53A7A8D-052A-496D-BACE-D822D22B72C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34208550-F7B9-4CD3-B123-304E4ED18488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34208550-F7B9-4CD3-B123-304E4ED18488}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34208550-F7B9-4CD3-B123-304E4ED18488}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34208550-F7B9-4CD3-B123-304E4ED18488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DDE83E-DC8C-4F9E-AB37-69A4DD7D3D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DDE83E-DC8C-4F9E-AB37-69A4DD7D3D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DDE83E-DC8C-4F9E-AB37-69A4DD7D3D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DDE83E-DC8C-4F9E-AB37-69A4DD7D3D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9004F52-02E9-4A72-A0AF-F53C17DE0164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9004F52-02E9-4A72-A0AF-F53C17DE0164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9004F52-02E9-4A72-A0AF-F53C17DE0164}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9004F52-02E9-4A72-A0AF-F53C17DE0164}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
