@@ -4,9 +4,51 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TFPDesktopUI"
-        mc:Ignorable="d"
+        mc:Ignorable="d" FontSize="20"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" 
+                   Margin="5" FontSize="28"
+                   Text="Text File Processing App" />
+
+        <Button x:Name="BrowseFile" 
+                Grid.Row="1" Grid.Column="0" 
+                Margin="10" Padding="20 10" Click="BrowseFile_Click">
+            Browse File
+        </Button>
+        <TextBlock x:Name="FilePath" 
+                   Grid.Row="1" Grid.Column="1" 
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   Margin="10" Padding="5" />
+
+        <Button x:Name="Analyze" 
+                Grid.Row="2" Grid.Column="0" 
+                Margin="10" Padding="20 10" Click="Analyze_Click">
+            Analyze
+        </Button>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" 
+                   Margin="10" Padding="20 10" 
+                   HorizontalAlignment="Right"
+                   Text="Progress" />
+        <ProgressBar Grid.Row="3" Grid.Column="1" 
+                     Height="28" Margin="10" />
+
+        <TextBlock x:Name="ResultWindow" 
+                   Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
+                   Margin="10" Padding="10" />
     </Grid>
 </Window>
