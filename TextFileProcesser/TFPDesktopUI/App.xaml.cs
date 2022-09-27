@@ -16,6 +16,7 @@ public partial class App : Application
             {
                 services.AddSingleton<MainWindow>();
                 services.AddTransient<IFileHandler, FileHandler>();
+                services.AddTransient<ITextProcessor, TextProcessor>();
             })
             .Build();
     }

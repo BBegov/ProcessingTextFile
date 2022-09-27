@@ -2,8 +2,8 @@
 
 public class FileHandler : IFileHandler
 {
-    public string ReadFile(string path)
+    public string[] ReadFileByLines(string path)
     {
-        return System.IO.File.ReadAllText(path);
+        return File.ReadAllLines(path);
     }
 }
