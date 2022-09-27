@@ -3,10 +3,7 @@ Counts the words in a specified text file and presents ordered by number of occu
 
 
 The purpose of this example is to demonstrate an approach for solving a problem for an actual user.
-Below, there is a description of the scenario with some of the technical requirements as well. 
-However, it is up to you to choose how are you going to solve the problem and how the final 
-technical solution (the application) is going to look like. 
-Quality of the solution (e.g. code quality) is important.
+Below, there is a description of the scenario with some of the technical requirements as well.
 
 ### Scenario ###
 
@@ -47,8 +44,3 @@ Enos	1
 1:2	    1
 Cainan	1
 Iared	1
-
-* When sending the source code, please delete the generated temporary and/or binary files from the
-solution to ensure that our mail system accepts the attachment 
-(e.g. “bin” and “obj” folders for C# solution). In case of any issues, please share the solution 
-using some of the available platforms (e.g. GitHub, Google Drive, Dropbox, or similar).
