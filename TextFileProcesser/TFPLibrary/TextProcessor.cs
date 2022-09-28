@@ -13,14 +13,10 @@ public class TextProcessor : ITextProcessor
         {
             if (line.Length < 1) continue;
 
-            if (line[0] != ' ')
-            {
-                content.Append(' ');
-            }
-
             var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
+            var lineToAppend = ((line[0] != ' ') ? " " : "") + wordsWithSingleSpaces;
 
-            content.Append(wordsWithSingleSpaces);
+            content.Append(lineToAppend);
         }
         
         return content
