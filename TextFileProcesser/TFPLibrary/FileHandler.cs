@@ -2,8 +2,8 @@
 
 public class FileHandler : IFileHandler
 {
-    public string[] ReadFileByLines(string path)
+    public async Task<string[]> ReadFileByLines(string path)
     {
-        return File.ReadAllLines(path);
+        return await File.ReadAllLinesAsync(path);
     }
 }

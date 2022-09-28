@@ -2,5 +2,5 @@
 
 public interface IFileHandler
 {
-    string[] ReadFileByLines(string path);
+    Task<string[]> ReadFileByLines(string path);
 }
