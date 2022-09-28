@@ -5,7 +5,7 @@ namespace TFPLibrary;
 
 public class TextProcessor : ITextProcessor
 {
-    public string[] SeparateToSingleWords(string[] text, string delimiter)
+    public string[] SeparateToSingleWords(string[] text, string delimiter = " ")
     {
         var content = new StringBuilder();
 
