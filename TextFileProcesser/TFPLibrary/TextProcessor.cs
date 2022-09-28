@@ -5,7 +5,7 @@ namespace TFPLibrary;
 
 public class TextProcessor : ITextProcessor
 {
-    public string[] SeparateToSingleWords(string[] text, string delimiter)
+    public string[] SeparateToSingleWords(string[] text, string delimiter = " ")
     {
         var content = new StringBuilder();
 
@@ -13,14 +13,10 @@ public class TextProcessor : ITextProcessor
         {
             if (line.Length < 1) continue;
 
-            if (line[0] != ' ')
-            {
-                content.Append(' ');
-            }
+            var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
+            var lineToAppend = ((line[0] != ' ') ? " " : "") + wordsWithSingleSpaces;
 
-            var strippedLine = Regex.Replace(line, @"\s+", " ");
-
-            content.Append(strippedLine);
+            content.Append(lineToAppend);
         }
         
         return content

@@ -14,12 +14,12 @@ public partial class MainWindow : Window
         InitializeComponent();
         _fileHandler = fileHandler;
         _textProcessor = textProcessor;
-        CollapseResults();
+        ResetApp();
     }
 
     private void BrowseFile_Click(object sender, RoutedEventArgs e)
     {
-        CollapseResults();
+        ResetApp();
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -37,31 +37,28 @@ public partial class MainWindow : Window
 
     private void Analyze_Click(object sender, RoutedEventArgs e)
     {
-        CollapseResults();
+        ResetApp();
 
         if (FilePath.Text == string.Empty)
         {
-            ResultMessage.Text = "Browse a file first!";
-            ResultMessage.Visibility = Visibility.Visible;
+            ShowMessage("Browse a file first!");
             return;
         }
 
-        var content = _fileHandler.ReadFileByLines(FilePath.Text);
+        var fileContent = _fileHandler.ReadFileByLines(FilePath.Text);
         
-        if (content.Length == 0)
+        if (fileContent.Length == 0)
         {
-            ResultMessage.Text = "File is empty.";
-            ResultMessage.Visibility = Visibility.Visible;
+            ShowMessage("File is empty.");
             return;
         }
 
-        const string delimiter = " ";
-        var words = _textProcessor.SeparateToSingleWords(content, delimiter);
-        var results = _textProcessor.CountWordsOccurrences(words);
+        var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
+        var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
         
-        foreach (var wordWithOccurrence in results)
+        foreach (var wordWithOccurrence in wordsWithOccurrences)
         {
-            var item = new TextFileResult{ Word = wordWithOccurrence.Item1, Occurrence = wordWithOccurrence.Item2 };
+            var item = new TextFileResult { Word = wordWithOccurrence.Item1, Occurrence = wordWithOccurrence.Item2 };
             ResultList.Items.Add(item);
         }
 
@@ -73,12 +70,29 @@ public partial class MainWindow : Window
         return;
     }
 
-    private void CollapseResults()
+    private void ResetApp()
+    {
+        CollapseWindowItems();
+        ClearResultList();
+    }
+
+    private void CollapseWindowItems()
     {
         ProgressBar.Visibility = Visibility.Collapsed;
         ProgressBarLabel.Visibility = Visibility.Collapsed;
         ResultMessage.Visibility = Visibility.Collapsed;
         ResultList.Visibility = Visibility.Collapsed;
         Cancel.Visibility = Visibility.Collapsed;
+    }
+
+    private void ClearResultList()
+    {
+        ResultList.Items.Clear();
+    }
+
+    private void ShowMessage(string message)
+    {
+        ResultMessage.Text = message;
+        ResultMessage.Visibility = Visibility.Visible;
     }
 }
