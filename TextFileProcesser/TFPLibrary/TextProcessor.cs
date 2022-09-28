@@ -18,9 +18,9 @@ public class TextProcessor : ITextProcessor
                 content.Append(' ');
             }
 
-            var strippedLine = Regex.Replace(line, @"\s+", " ");
+            var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
 
-            content.Append(strippedLine);
+            content.Append(wordsWithSingleSpaces);
         }
         
         return content
