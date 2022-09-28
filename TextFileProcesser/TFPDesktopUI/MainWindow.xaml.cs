@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using TFPDesktopUI.Models;
 using TFPLibrary;
 
@@ -45,21 +46,29 @@ public partial class MainWindow : Window
             return;
         }
 
-        var fileContent = _fileHandler.ReadFileByLines(FilePath.Text);
-        
-        if (fileContent.Length == 0)
+        try
         {
-            ShowMessage("File is empty.");
-            return;
-        }
+            var fileContent = _fileHandler.ReadFileByLines(FilePath.Text);
 
-        var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
-        var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
-        
-        foreach (var wordWithOccurrence in wordsWithOccurrences)
+            if (fileContent.Length == 0)
+            {
+                ShowMessage("File is empty.");
+                return;
+            }
+
+            var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
+            var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
+
+            foreach (var wordWithOccurrence in wordsWithOccurrences)
+            {
+                var item = new TextFileResult { Word = wordWithOccurrence.Item1, Occurrence = wordWithOccurrence.Item2 };
+                ResultList.Items.Add(item);
+            }
+        }
+        catch (IOException exception)
         {
-            var item = new TextFileResult { Word = wordWithOccurrence.Item1, Occurrence = wordWithOccurrence.Item2 };
-            ResultList.Items.Add(item);
+            ShowMessage($"An exception occurred:\nError code: {exception.HResult & 0x0000FFFF}\nMessage: {exception.Message}");
+            return;
         }
 
         ResultList.Visibility = Visibility.Visible;
@@ -80,7 +89,7 @@ public partial class MainWindow : Window
     {
         ProgressBar.Visibility = Visibility.Collapsed;
         ProgressBarLabel.Visibility = Visibility.Collapsed;
-        ResultMessage.Visibility = Visibility.Collapsed;
+        InfoMessage.Visibility = Visibility.Collapsed;
         ResultList.Visibility = Visibility.Collapsed;
         Cancel.Visibility = Visibility.Collapsed;
     }
@@ -92,7 +101,7 @@ public partial class MainWindow : Window
 
     private void ShowMessage(string message)
     {
-        ResultMessage.Text = message;
-        ResultMessage.Visibility = Visibility.Visible;
+        InfoMessage.Text = message;
+        InfoMessage.Visibility = Visibility.Visible;
     }
 }

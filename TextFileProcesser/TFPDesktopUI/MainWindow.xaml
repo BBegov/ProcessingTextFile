@@ -53,9 +53,9 @@
             Analyze
         </Button>
         
-        <TextBlock x:Name="ResultMessage"
-                   Grid.Row="2" Grid.Column="1"
-                   Margin="10" Padding="20 10"/>
+        <TextBlock x:Name="InfoMessage"
+                   Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="3"
+                   Margin="10" Padding="20 10" TextWrapping="Wrap"/>
 
         <TextBlock x:Name="ProgressBarLabel" 
                    Grid.Row="3" Grid.Column="0" 
