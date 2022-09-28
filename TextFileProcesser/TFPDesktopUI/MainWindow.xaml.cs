@@ -1,7 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using TFPDesktopUI.Models;
 using TFPLibrary;
+using TFPDesktopUI.Service.Extensions;
 
 namespace TFPDesktopUI;
 
@@ -9,10 +14,12 @@ public partial class MainWindow : Window
 {
     private readonly IFileHandler _fileHandler;
     private readonly ITextProcessor _textProcessor;
+    public ObservableCollection<TextFileResult> TextFileResults { get; private set; } = new();
 
     public MainWindow(IFileHandler fileHandler, ITextProcessor textProcessor)
     {
         InitializeComponent();
+        DataContext = this;
         _fileHandler = fileHandler;
         _textProcessor = textProcessor;
         ResetApp();
@@ -21,6 +28,7 @@ public partial class MainWindow : Window
     private void BrowseFile_Click(object sender, RoutedEventArgs e)
     {
         ResetApp();
+        FilePath.Text = string.Empty;
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -36,7 +44,7 @@ public partial class MainWindow : Window
         FilePath.Text = dialog.FileName;
     }
 
-    private void Analyze_Click(object sender, RoutedEventArgs e)
+    private async void Analyze_Click(object sender, RoutedEventArgs e)
     {
         ResetApp();
 
@@ -48,7 +56,7 @@ public partial class MainWindow : Window
 
         try
         {
-            var fileContent = _fileHandler.ReadFileByLines(FilePath.Text);
+            var fileContent = await _fileHandler.ReadFileByLines(FilePath.Text);
 
             if (fileContent.Length == 0)
             {
@@ -56,14 +64,9 @@ public partial class MainWindow : Window
                 return;
             }
 
-            var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
-            var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
+            var wordsWithOccurrences = await Task.Run(() => ProcessFileContent(fileContent));
 
-            foreach (var wordWithOccurrence in wordsWithOccurrences)
-            {
-                var item = new TextFileResult { Word = wordWithOccurrence.Item1, Occurrence = wordWithOccurrence.Item2 };
-                ResultList.Items.Add(item);
-            }
+            Task.Run(() => PopulateResultList(wordsWithOccurrences)).Wait();
         }
         catch (IOException exception)
         {
@@ -71,7 +74,30 @@ public partial class MainWindow : Window
             return;
         }
 
+        LoadResult();
+    }
+
+    private void LoadResult()
+    {
+        ResultList.ItemsSource = TextFileResults;
         ResultList.Visibility = Visibility.Visible;
+        ShowMessage(FilePath.Text[(FilePath.Text.LastIndexOf(@"\", StringComparison.Ordinal) + 1)..]);
+    }
+
+    private List<TextFileResult> ProcessFileContent(string[] fileContent)
+    {
+        var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
+        var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
+
+        return wordsWithOccurrences.ToTextFileResults();
+    }
+
+    private void PopulateResultList(IEnumerable<TextFileResult> wordsWithOccurrences)
+    {
+        foreach (var wordWithOccurrence in wordsWithOccurrences)
+        {
+            TextFileResults.Add(wordWithOccurrence);
+        }
     }
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -82,7 +108,7 @@ public partial class MainWindow : Window
     private void ResetApp()
     {
         CollapseWindowItems();
-        ClearResultList();
+        ClearResultCollection();
     }
 
     private void CollapseWindowItems()
@@ -94,9 +120,9 @@ public partial class MainWindow : Window
         Cancel.Visibility = Visibility.Collapsed;
     }
 
-    private void ClearResultList()
+    private void ClearResultCollection()
     {
-        ResultList.Items.Clear();
+        TextFileResults = new ObservableCollection<TextFileResult>();
     }
 
     private void ShowMessage(string message)
