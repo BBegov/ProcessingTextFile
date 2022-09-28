@@ -14,12 +14,12 @@ public partial class MainWindow : Window
         InitializeComponent();
         _fileHandler = fileHandler;
         _textProcessor = textProcessor;
-        CollapseWindowItems();
+        ResetApp();
     }
 
     private void BrowseFile_Click(object sender, RoutedEventArgs e)
     {
-        CollapseWindowItems();
+        ResetApp();
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -37,7 +37,7 @@ public partial class MainWindow : Window
 
     private void Analyze_Click(object sender, RoutedEventArgs e)
     {
-        CollapseWindowItems();
+        ResetApp();
 
         if (FilePath.Text == string.Empty)
         {
@@ -70,6 +70,12 @@ public partial class MainWindow : Window
         return;
     }
 
+    private void ResetApp()
+    {
+        CollapseWindowItems();
+        ClearResultList();
+    }
+
     private void CollapseWindowItems()
     {
         ProgressBar.Visibility = Visibility.Collapsed;
@@ -77,6 +83,11 @@ public partial class MainWindow : Window
         ResultMessage.Visibility = Visibility.Collapsed;
         ResultList.Visibility = Visibility.Collapsed;
         Cancel.Visibility = Visibility.Collapsed;
+    }
+
+    private void ClearResultList()
+    {
+        ResultList.Items.Clear();
     }
 
     private void ShowMessage(string message)
