@@ -6,4 +6,9 @@ public class FileHandler : IFileHandler
     {
         return await File.ReadAllLinesAsync(path);
     }
+
+    public int CountNumberOfLinesInFile(string path)
+    {
+        return (int) File.ReadLines(path).Count();
+    }
 }
