@@ -64,6 +64,7 @@ public partial class MainWindow : Window
             if (fileLinesCount == 0)
             {
                 ShowMessage("File is empty.");
+                EnableMainButtons(true);
                 return;
             }
 
