@@ -5,17 +5,13 @@ namespace TFPLibrary;
 
 public class TextProcessor : ITextProcessor
 {
-    public string[] SeparateToSingleWords(string[] text, string delimiter = " ")
+    public string[] SeparateTextToSingleWords(string[] text, string delimiter = " ")
     {
         var content = new StringBuilder();
 
         foreach (var line in text)
         {
-            if (line.Length < 1) continue;
-
-            var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
-            var lineToAppend = ((line[0] != ' ') ? " " : "") + wordsWithSingleSpaces;
-
+            var lineToAppend = CleanText(line);
             content.Append(lineToAppend);
         }
         
@@ -23,6 +19,16 @@ public class TextProcessor : ITextProcessor
             .ToString()
             .Split(delimiter)
             .ToArray()[1..];
+    }
+
+    private static string CleanText(string line)
+    {
+        if (line.Length == 0) return string.Empty;
+
+        var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
+        var cleanedLine = (line[0] != ' ' ? " " : "") + wordsWithSingleSpaces;
+        
+        return cleanedLine;
     }
 
     public (string, int)[] CountWordsOccurrences(string[] words)

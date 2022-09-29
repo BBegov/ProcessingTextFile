@@ -2,6 +2,6 @@
 
 public interface ITextProcessor
 {
-    string[] SeparateToSingleWords(string[] text, string delimiter = " ");
+    string[] SeparateTextToSingleWords(string[] text, string delimiter = " ");
     (string, int)[] CountWordsOccurrences(string[] words);
 }
