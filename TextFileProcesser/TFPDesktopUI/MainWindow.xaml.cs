@@ -47,8 +47,11 @@ public partial class MainWindow : Window
     private async void Analyze_Click(object sender, RoutedEventArgs e)
     {
         ResetApp();
+        EnableMainButtons(false);
 
-        if (FilePath.Text == string.Empty)
+        var path = FilePath.Text;
+
+        if (path == string.Empty)
         {
             ShowMessage("Browse a file first!");
             return;
@@ -56,17 +59,29 @@ public partial class MainWindow : Window
 
         try
         {
-            var fileContent = await _fileHandler.ReadFileByLines(FilePath.Text);
+            var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(path);
 
-            if (fileContent.Length == 0)
+            if (fileLinesCount == 0)
             {
                 ShowMessage("File is empty.");
                 return;
             }
 
-            var wordsWithOccurrences = await Task.Run(() => ProcessFileContent(fileContent));
+            // Reading the file
+            ShowProgressBarElements();
+            ShowMessage("1. Reading file...");
+            var fileContent = await _fileHandler.ReadFileByLines(path);
+            ReportProgress((1 * 100) / 3);
 
+            // Processing the file
+            AddToMessage("\nProcessing file...");
+            var wordsWithOccurrences = await Task.Run(() => ProcessFileContent(fileContent));
+            ReportProgress((2 * 100) / 3);
+            
+            // Populating results
+            AddToMessage("\nPreparing result...");
             Task.Run(() => PopulateResultList(wordsWithOccurrences)).Wait();
+            ReportProgress((3 * 100) / 3);
         }
         catch (IOException exception)
         {
@@ -75,18 +90,38 @@ public partial class MainWindow : Window
         }
 
         LoadResult();
+        ShowResult();
+    }
+
+    private void ReportProgress(int percentageComplete)
+    {
+        if (ProgressBar.Visibility != Visibility.Visible)
+        {
+            ProgressBar.Visibility = Visibility.Visible;
+        }
+
+        AddToMessage("Done");
+
+        ProgressBar.Value = percentageComplete;
     }
 
     private void LoadResult()
     {
         ResultList.ItemsSource = TextFileResults;
+    }
+
+    private void ShowResult()
+    {
+        CollapseProgressBarElements();
+        EnableMainButtons(true);
         ResultList.Visibility = Visibility.Visible;
         ShowMessage(FilePath.Text[(FilePath.Text.LastIndexOf(@"\", StringComparison.Ordinal) + 1)..]);
+        ProgressBar.Value = 0;
     }
 
     private List<TextFileResult> ProcessFileContent(string[] fileContent)
     {
-        var singleWords = _textProcessor.SeparateToSingleWords(fileContent);
+        var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
         var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
 
         return wordsWithOccurrences.ToTextFileResults();
@@ -107,17 +142,36 @@ public partial class MainWindow : Window
 
     private void ResetApp()
     {
+        EnableMainButtons(true);
         CollapseWindowItems();
         ClearResultCollection();
     }
 
+    private void EnableMainButtons(bool status)
+    {
+        BrowseFile.IsEnabled = status;
+        Analyze.IsEnabled = status;
+    }
+
     private void CollapseWindowItems()
+    {
+        CollapseProgressBarElements();
+        InfoMessage.Visibility = Visibility.Collapsed;
+        ResultList.Visibility = Visibility.Collapsed;
+    }
+
+    private void CollapseProgressBarElements()
     {
         ProgressBar.Visibility = Visibility.Collapsed;
         ProgressBarLabel.Visibility = Visibility.Collapsed;
-        InfoMessage.Visibility = Visibility.Collapsed;
-        ResultList.Visibility = Visibility.Collapsed;
         Cancel.Visibility = Visibility.Collapsed;
+    }
+
+    private void ShowProgressBarElements()
+    {
+        ProgressBar.Visibility = Visibility.Visible;
+        ProgressBarLabel.Visibility = Visibility.Visible;
+        Cancel.Visibility = Visibility.Visible;
     }
 
     private void ClearResultCollection()
@@ -129,5 +183,10 @@ public partial class MainWindow : Window
     {
         InfoMessage.Text = message;
         InfoMessage.Visibility = Visibility.Visible;
+    }
+
+    private void AddToMessage(string text)
+    {
+        InfoMessage.Text += text;
     }
 }
