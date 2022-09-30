@@ -53,7 +53,7 @@
         <Button Content="Cancel" 
                 Grid.Row="3" Grid.Column="0" 
                 Margin="10" Padding="20 10" 
-                Command="{Binding CancelCommand}" />
+                Command="{Binding AnalyzeCancelCommand}" />
         
         <ProgressBar x:Name="ProgressBar"
                      Grid.Row="3" Grid.Column="1"

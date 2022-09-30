@@ -15,8 +15,6 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IFileHandler _fileHandler;
     private readonly ITextProcessor _textProcessor;
-
-    private CancellationTokenSource? _tokenSource;
     
     [ObservableProperty]
     private List<TextFileResult> _textFileResults = new();
@@ -28,7 +26,6 @@ public partial class MainWindowViewModel : ObservableObject
     private string? _infoMessage;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private int _progressbarValue;
 
     [ObservableProperty]
@@ -61,25 +58,11 @@ public partial class MainWindowViewModel : ObservableObject
         FilePath = dialog.FileName;
     }
 
-    [RelayCommand(CanExecute = nameof(CanCancel))]
-    private void Cancel()
-    {
-        _tokenSource?.Cancel();
-    }
-
-    private bool CanCancel()
-    {
-        return ProgressbarValue is > 0 and < 100;
-    }
-
-    [RelayCommand]
-    private async Task Analyze()
+    [RelayCommand(IncludeCancelCommand = true)]
+    private async Task Analyze(CancellationToken token)
     {
         var progress = new Progress<int>();
         progress.ProgressChanged += ReportProgress;
-
-        _tokenSource = new CancellationTokenSource();
-        var token = _tokenSource.Token;
 
         if (FilePath == string.Empty)
         {
@@ -131,19 +114,14 @@ public partial class MainWindowViewModel : ObservableObject
         var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
         InfoMessage += "Done";
 
-        token.ThrowIfCancellationRequested();
-
         InfoMessage += "\n2. Processing file...";
-        await Task.Run(() => ProcessFileContent(fileContent, token), token);
+        await Task.Run(() => ProcessFileContent(fileContent), token);
         InfoMessage += "Done";
     }
 
-    private void ProcessFileContent(string fileContent, CancellationToken token)
+    private void ProcessFileContent(string fileContent)
     {
         var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
-
-        token.ThrowIfCancellationRequested();
-
         var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
 
         TextFileResults = wordsWithOccurrences.ToTextFileResults();
