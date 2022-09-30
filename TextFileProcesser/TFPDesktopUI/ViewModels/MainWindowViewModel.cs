@@ -25,7 +25,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string _filePath = string.Empty;
 
     [ObservableProperty]
-    private string _infoMessage = string.Empty;
+    private string? _infoMessage;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
@@ -38,6 +38,27 @@ public partial class MainWindowViewModel : ObservableObject
     {
         _fileHandler = fileHandler;
         _textProcessor = textProcessor;
+
+        ResetProperties();
+    }
+
+    [RelayCommand]
+    private void BrowseFile()
+    {
+        ResetProperties();
+
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            FileName = "Document",
+            DefaultExt = ".txt",
+            Filter = "Text documents (.txt)|*.txt"
+        };
+
+        var isFileChosen = dialog.ShowDialog();
+
+        if (isFileChosen == false) return;
+
+        FilePath = dialog.FileName;
     }
 
     [RelayCommand(CanExecute = nameof(CanCancel))]
@@ -95,26 +116,12 @@ public partial class MainWindowViewModel : ObservableObject
         PercentageComplete = $"{e}%";
     }
 
-    [RelayCommand]
-    private void BrowseFile()
+    private void ResetProperties()
     {
         FilePath = string.Empty;
         InfoMessage = string.Empty;
         ProgressbarValue = 0;
         PercentageComplete = string.Empty;
-
-        var dialog = new Microsoft.Win32.OpenFileDialog
-        {
-            FileName = "Document",
-            DefaultExt = ".txt",
-            Filter = "Text documents (.txt)|*.txt"
-        };
-
-        var isFileChosen = dialog.ShowDialog();
-
-        if (isFileChosen == false) return;
-
-        FilePath = dialog.FileName;
     }
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
