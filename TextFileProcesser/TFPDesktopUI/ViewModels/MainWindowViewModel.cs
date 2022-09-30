@@ -127,14 +127,12 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        //Reading the file
         InfoMessage = "1. Reading file...";
         var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
         InfoMessage += "Done";
 
         token.ThrowIfCancellationRequested();
 
-        //Processing the file
         InfoMessage += "\n2. Processing file...";
         await Task.Run(() => ProcessFileContent(fileContent, token), token);
         InfoMessage += "Done";
