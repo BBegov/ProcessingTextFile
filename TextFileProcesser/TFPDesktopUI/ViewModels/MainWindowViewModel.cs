@@ -11,7 +11,8 @@ using TFPLibrary;
 
 namespace TFPDesktopUI.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+[ObservableObject]
+public partial class MainWindowViewModel
 {
     private readonly IFileHandler _fileHandler;
     private readonly ITextProcessor _textProcessor;
