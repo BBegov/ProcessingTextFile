@@ -29,6 +29,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AnalyzeCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private int _progressbarValue;
 
     [ObservableProperty]
@@ -41,13 +42,15 @@ public partial class MainWindowViewModel : ObservableObject
         _textProcessor = textProcessor;
     }
 
-    private bool CanCancel()
-        => ProgressbarValue != 0 && ProgressbarValue != 100;
-    
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void Cancel()
     {
         _tokenSource?.Cancel();
+    }
+
+    private bool CanCancel()
+    {
+        return ProgressbarValue is > 0 and < 100;
     }
 
     [RelayCommand]
