@@ -70,9 +70,9 @@ public partial class MainWindowViewModel : ObservableObject
             InfoMessage += "Done";
 
             //Processing the file
-            InfoMessage += "\nProcessing file...";
+            InfoMessage += "\n2. Processing file...";
             await Task.Run(() => ProcessFileContent(fileContent));
-            PercentageComplete = 50;
+            PercentageComplete = 100;
             InfoMessage += "Done";
         }
         catch (IOException exception)
