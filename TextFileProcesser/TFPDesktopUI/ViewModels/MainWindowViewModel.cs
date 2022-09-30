@@ -28,12 +28,10 @@ public partial class MainWindowViewModel : ObservableObject
     private string _infoMessage = string.Empty;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AnalyzeCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private int _progressbarValue;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AnalyzeCommand))]
     private string? _percentageComplete;
 
     public MainWindowViewModel(IFileHandler fileHandler, ITextProcessor textProcessor)
@@ -89,10 +87,6 @@ public partial class MainWindowViewModel : ObservableObject
             InfoMessage =
                 $"An exception occurred:\nError code: {exception.HResult & 0x0000FFFF}\nMessage: {exception.Message}";
         }
-        finally
-        {
-            _tokenSource.Dispose();
-        }
     }
 
     private void ReportProgress(object? sender, int e)
@@ -106,6 +100,8 @@ public partial class MainWindowViewModel : ObservableObject
     {
         FilePath = string.Empty;
         InfoMessage = string.Empty;
+        ProgressbarValue = 0;
+        PercentageComplete = string.Empty;
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
