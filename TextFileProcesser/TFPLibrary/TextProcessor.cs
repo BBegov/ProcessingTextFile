@@ -1,43 +1,34 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace TFPLibrary;
 
 public class TextProcessor : ITextProcessor
 {
-    public string[] SeparateTextToSingleWords(string[] text, string delimiter = " ")
+    public string[] SeparateTextToSingleWords(string text, string delimiter = " ")
     {
-        var content = new StringBuilder();
-
-        foreach (var line in text)
-        {
-            var lineToAppend = CleanText(line);
-            content.Append(lineToAppend);
-        }
-        
-        return content
-            .ToString()
+        return CleanText(text)
             .Split(delimiter)
-            .ToArray()[1..];
+            .ToArray();
     }
 
-    private static string CleanText(string line)
+    private static string CleanText(string text)
     {
-        if (line.Length == 0) return string.Empty;
-
-        var wordsWithSingleSpaces = Regex.Replace(line, @"\s+", " ");
-        var cleanedLine = (line[0] != ' ' ? " " : "") + wordsWithSingleSpaces;
-        
-        return cleanedLine;
+        return text.Length == 0 
+            ? string.Empty 
+            : Regex
+                .Replace(text, @"\s+", " ")
+                .Trim();
     }
 
     public (string, int)[] CountWordsOccurrences(string[] words)
     {
         var wordsAndCounts = new Dictionary<string, int>();
 
-        foreach (var word in words.Select(word => word.Trim()))
+        foreach (var word in words)
         {
-            wordsAndCounts[word] = wordsAndCounts.ContainsKey(word) ? wordsAndCounts[word] + 1 : 1;
+            wordsAndCounts[word] = wordsAndCounts.ContainsKey(word) 
+                ? wordsAndCounts[word] + 1 
+                : 1;
         }
 
         return wordsAndCounts

@@ -1,8 +1,8 @@
 ﻿using System.Windows;
-using TFPLibrary;
 using TFPDesktopUI.ViewModels;
+using TFPLibrary;
 
-namespace TFPDesktopUI;
+namespace TFPDesktopUI.Views;
 
 public partial class MainWindow : Window
 {

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,79 +15,37 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IFileHandler _fileHandler;
     private readonly ITextProcessor _textProcessor;
+
+    private CancellationTokenSource? _tokenSource;
     
     [ObservableProperty]
     private List<TextFileResult> _textFileResults = new();
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(BrowseFileCommand))]
     private string _filePath = string.Empty;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AnalyzeCommand))]
-    private string _infoMessage = string.Empty;
+    private string? _infoMessage;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AnalyzeCommand))]
-    private int _percentageComplete;
+    [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    private int _progressbarValue;
+
+    [ObservableProperty]
+    private string? _percentageComplete;
 
     public MainWindowViewModel(IFileHandler fileHandler, ITextProcessor textProcessor)
     {
         _fileHandler = fileHandler;
         _textProcessor = textProcessor;
-    }
 
-    private bool CanAnalyze() 
-        => FilePath != string.Empty;
-
-    
-    [RelayCommand]
-    private void Cancel()
-    {
-    }
-
-    [RelayCommand]
-    private async Task Analyze()
-    {
-        if (FilePath == string.Empty)
-        {
-            InfoMessage = "Browse a file first!";
-            return;
-        }
-
-        try
-        {
-            var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
-
-            if (fileLinesCount == 0)
-            {
-                InfoMessage = "File is empty.";
-                return;
-            }
-
-            //Reading the file
-            InfoMessage = "1. Reading file...";
-            var fileContent = await _fileHandler.ReadFileByLines(FilePath);
-            PercentageComplete = 50;
-            InfoMessage += "Done";
-
-            //Processing the file
-            InfoMessage += "\nProcessing file...";
-            await Task.Run(() => ProcessFileContent(fileContent));
-            PercentageComplete = 50;
-            InfoMessage += "Done";
-        }
-        catch (IOException exception)
-        {
-            InfoMessage = $"An exception occurred:\nError code: {exception.HResult & 0x0000FFFF}\nMessage: {exception.Message}";
-        }
+        ResetProperties();
     }
 
     [RelayCommand]
     private void BrowseFile()
     {
-        FilePath = string.Empty;
-        InfoMessage = string.Empty;
+        ResetProperties();
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -101,9 +61,89 @@ public partial class MainWindowViewModel : ObservableObject
         FilePath = dialog.FileName;
     }
 
-    private void ProcessFileContent(string[] fileContent)
+    [RelayCommand(CanExecute = nameof(CanCancel))]
+    private void Cancel()
+    {
+        _tokenSource?.Cancel();
+    }
+
+    private bool CanCancel()
+    {
+        return ProgressbarValue is > 0 and < 100;
+    }
+
+    [RelayCommand]
+    private async Task Analyze()
+    {
+        var progress = new Progress<int>();
+        progress.ProgressChanged += ReportProgress;
+
+        _tokenSource = new CancellationTokenSource();
+        var token = _tokenSource.Token;
+
+        if (FilePath == string.Empty)
+        {
+            InfoMessage = "Browse a file first!";
+            return;
+        }
+
+        try
+        {
+            await FileParsing(progress, token);
+        }
+        catch (OperationCanceledException)
+        {
+            InfoMessage = "File parsing was canceled.";
+        }
+        catch (IOException exception)
+        {
+            InfoMessage =
+                $"An exception occurred:\nError code: {exception.HResult & 0x0000FFFF}\nMessage: {exception.Message}";
+        }
+    }
+
+    private void ReportProgress(object? sender, int e)
+    {
+        ProgressbarValue = e;
+        PercentageComplete = $"{e}%";
+    }
+
+    private void ResetProperties()
+    {
+        FilePath = string.Empty;
+        InfoMessage = string.Empty;
+        ProgressbarValue = 0;
+        PercentageComplete = string.Empty;
+        TextFileResults.Clear();
+    }
+
+    private async Task FileParsing(IProgress<int> progress, CancellationToken token)
+    {
+        var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
+
+        if (fileLinesCount == 0)
+        {
+            InfoMessage = "File is empty.";
+            return;
+        }
+
+        InfoMessage = "1. Reading file...";
+        var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
+        InfoMessage += "Done";
+
+        token.ThrowIfCancellationRequested();
+
+        InfoMessage += "\n2. Processing file...";
+        await Task.Run(() => ProcessFileContent(fileContent, token), token);
+        InfoMessage += "Done";
+    }
+
+    private void ProcessFileContent(string fileContent, CancellationToken token)
     {
         var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
+
+        token.ThrowIfCancellationRequested();
+
         var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
 
         TextFileResults = wordsWithOccurrences.ToTextFileResults();
