@@ -89,14 +89,6 @@ public partial class MainWindowViewModel : ObservableObject
 
         try
         {
-            var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
-
-            if (fileLinesCount == 0)
-            {
-                InfoMessage = "File is empty.";
-                return;
-            }
-
             await FileParsing(progress, token);
         }
         catch (OperationCanceledException)
@@ -126,6 +118,14 @@ public partial class MainWindowViewModel : ObservableObject
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
     {
+        var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
+
+        if (fileLinesCount == 0)
+        {
+            InfoMessage = "File is empty.";
+            return;
+        }
+
         //Reading the file
         InfoMessage = "1. Reading file...";
         var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
