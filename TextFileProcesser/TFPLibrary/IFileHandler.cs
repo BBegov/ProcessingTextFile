@@ -2,6 +2,6 @@
 
 public interface IFileHandler
 {
-    Task<string[]> ReadFileByLines(string path);
+    Task<string[]> ReadFileByLinesAsync(string path);
     int CountNumberOfLinesInFile(string path);
 }
