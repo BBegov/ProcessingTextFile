@@ -135,13 +135,16 @@ public partial class MainWindowViewModel : ObservableObject
 
         //Processing the file
         InfoMessage += "\n2. Processing file...";
-        await Task.Run(() => ProcessFileContent(fileContent), token);
+        await Task.Run(() => ProcessFileContent(fileContent, token), token);
         InfoMessage += "Done";
     }
 
-    private void ProcessFileContent(string fileContent)
+    private void ProcessFileContent(string fileContent, CancellationToken token)
     {
         var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
+
+        token.ThrowIfCancellationRequested();
+
         var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
 
         TextFileResults = wordsWithOccurrences.ToTextFileResults();
