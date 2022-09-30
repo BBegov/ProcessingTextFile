@@ -114,6 +114,7 @@ public partial class MainWindowViewModel : ObservableObject
         InfoMessage = string.Empty;
         ProgressbarValue = 0;
         PercentageComplete = string.Empty;
+        TextFileResults.Clear();
     }
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
