@@ -1,3 +1,8 @@
+### Editorial comment:
+THis project is under development. Having enough time I continuously improve the application.
+
+---
+
 # ProcessingTextFile
 Counts the words in a specified text file and presents ordered by number of occurrences
 
