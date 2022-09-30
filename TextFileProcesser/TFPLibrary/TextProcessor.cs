@@ -8,26 +8,27 @@ public class TextProcessor : ITextProcessor
     {
         return CleanText(text)
             .Split(delimiter)
-            .ToArray()[1..];
+            .ToArray();
     }
 
     private static string CleanText(string text)
     {
-        if (text.Length == 0) return string.Empty;
-
-        var wordsWithSingleSpaces = Regex.Replace(text, @"\s+", " ");
-        var cleanedText = (text[0] != ' ' ? " " : "") + wordsWithSingleSpaces;
-        
-        return cleanedText;
+        return text.Length == 0 
+            ? string.Empty 
+            : Regex
+                .Replace(text, @"\s+", " ")
+                .Trim();
     }
 
     public (string, int)[] CountWordsOccurrences(string[] words)
     {
         var wordsAndCounts = new Dictionary<string, int>();
 
-        foreach (var word in words.Select(word => word.Trim()))
+        foreach (var word in words)
         {
-            wordsAndCounts[word] = wordsAndCounts.ContainsKey(word) ? wordsAndCounts[word] + 1 : 1;
+            wordsAndCounts[word] = wordsAndCounts.ContainsKey(word) 
+                ? wordsAndCounts[word] + 1 
+                : 1;
         }
 
         return wordsAndCounts
