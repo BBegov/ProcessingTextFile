@@ -7,7 +7,7 @@
         mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
         FontSize="20"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="720" Width="1280">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
