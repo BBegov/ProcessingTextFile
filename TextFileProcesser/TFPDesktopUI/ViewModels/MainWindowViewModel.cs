@@ -42,7 +42,7 @@ public partial class MainWindowViewModel
             Filter = "Text documents (.txt)|*.txt"
         };
 
-        var isFileChosen = dialog.ShowDialog();
+        if (dialog.ShowDialog() == false) return;
 
         if (isFileChosen == false) return;
 
