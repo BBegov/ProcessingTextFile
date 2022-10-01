@@ -60,6 +60,7 @@
                    Text="{Binding FilePath}" />
 
         <Button Grid.Row="2" Grid.Column="0" 
+                Margin="10 10 10 50 "
                 Content="Analyze" 
                 Command="{Binding AnalyzeCommand}" />
 
