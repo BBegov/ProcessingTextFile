@@ -32,6 +32,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private void BrowseFile()
     {
+        FilePath = string.Empty;
         ResetProperties();
 
         var dialog = new Microsoft.Win32.OpenFileDialog
@@ -51,6 +52,8 @@ public partial class MainWindowViewModel
     [RelayCommand(IncludeCancelCommand = true)]
     private async Task Analyze(CancellationToken token)
     {
+        ResetProperties();
+  
         var progress = new Progress<int>();
         progress.ProgressChanged += ReportProgress;
 
@@ -83,11 +86,10 @@ public partial class MainWindowViewModel
 
     private void ResetProperties()
     {
-        FilePath = string.Empty;
         InfoMessage = string.Empty;
         ProgressbarValue = 0;
         PercentageComplete = string.Empty;
-        TextFileResults.Clear();
+        TextFileResults = new List<TextFileResult>();
     }
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
