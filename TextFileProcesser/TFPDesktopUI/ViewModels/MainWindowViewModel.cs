@@ -14,9 +14,6 @@ namespace TFPDesktopUI.ViewModels;
 [ObservableObject]
 public partial class MainWindowViewModel
 {
-    private readonly IFileHandler _fileHandler;
-    private readonly ITextProcessor _textProcessor;
-    
     [ObservableProperty]
     private List<TextFileResult> _textFileResults = new();
 
@@ -31,14 +28,6 @@ public partial class MainWindowViewModel
 
     [ObservableProperty]
     private string? _percentageComplete;
-
-    public MainWindowViewModel(IFileHandler fileHandler, ITextProcessor textProcessor)
-    {
-        _fileHandler = fileHandler;
-        _textProcessor = textProcessor;
-
-        ResetProperties();
-    }
 
     [RelayCommand]
     private void BrowseFile()
@@ -103,7 +92,7 @@ public partial class MainWindowViewModel
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
     {
-        var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
+        var fileLinesCount = FileHandler.CountNumberOfLinesInFile(FilePath);
 
         if (fileLinesCount == 0)
         {
@@ -112,7 +101,7 @@ public partial class MainWindowViewModel
         }
 
         InfoMessage = "1. Reading file...";
-        var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
+        var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, token);
         InfoMessage += "Done";
 
         InfoMessage += "\n2. Processing file...";
@@ -122,8 +111,8 @@ public partial class MainWindowViewModel
 
     private void ProcessFileContent(string fileContent)
     {
-        var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
-        var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
+        var singleWords = TextProcessor.SeparateTextToSingleWords(fileContent);
+        var wordsWithOccurrences = TextProcessor.CountWordsOccurrences(singleWords);
 
         TextFileResults = wordsWithOccurrences.ToTextFileResults();
     }
