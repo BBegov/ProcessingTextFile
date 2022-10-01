@@ -1,8 +1,8 @@
 ﻿namespace TFPLibrary;
 
-public class FileHandler : IFileHandler
+public static class FileHandler
 {
-    public async Task<string> ReadFileByLinesAsync(string filePath, IProgress<int> progress, CancellationToken ct)
+    public static async Task<string> ReadFileByLinesAsync(string filePath, IProgress<int> progress, CancellationToken ct)
     {
         await using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
         using var reader = new StreamReader(stream);
@@ -23,7 +23,7 @@ public class FileHandler : IFileHandler
         return readTask.Result;
     }
 
-    public int CountNumberOfLinesInFile(string filePath)
+    public static int CountNumberOfLinesInFile(string filePath)
     {
         return (int) File.ReadLines(filePath).Count();
     }

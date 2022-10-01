@@ -14,9 +14,6 @@ namespace TFPDesktopUI.ViewModels;
 [ObservableObject]
 public partial class MainWindowViewModel
 {
-    private readonly IFileHandler _fileHandler;
-    private readonly ITextProcessor _textProcessor;
-    
     [ObservableProperty]
     private List<TextFileResult> _textFileResults = new();
 
@@ -32,17 +29,10 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private string? _percentageComplete;
 
-    public MainWindowViewModel(IFileHandler fileHandler, ITextProcessor textProcessor)
-    {
-        _fileHandler = fileHandler;
-        _textProcessor = textProcessor;
-
-        ResetProperties();
-    }
-
     [RelayCommand]
     private void BrowseFile()
     {
+        FilePath = string.Empty;
         ResetProperties();
 
         var dialog = new Microsoft.Win32.OpenFileDialog
@@ -62,6 +52,8 @@ public partial class MainWindowViewModel
     [RelayCommand(IncludeCancelCommand = true)]
     private async Task Analyze(CancellationToken token)
     {
+        ResetProperties();
+  
         var progress = new Progress<int>();
         progress.ProgressChanged += ReportProgress;
 
@@ -94,16 +86,15 @@ public partial class MainWindowViewModel
 
     private void ResetProperties()
     {
-        FilePath = string.Empty;
         InfoMessage = string.Empty;
         ProgressbarValue = 0;
         PercentageComplete = string.Empty;
-        TextFileResults.Clear();
+        TextFileResults = new List<TextFileResult>();
     }
 
     private async Task FileParsing(IProgress<int> progress, CancellationToken token)
     {
-        var fileLinesCount = _fileHandler.CountNumberOfLinesInFile(FilePath);
+        var fileLinesCount = FileHandler.CountNumberOfLinesInFile(FilePath);
 
         if (fileLinesCount == 0)
         {
@@ -112,7 +103,7 @@ public partial class MainWindowViewModel
         }
 
         InfoMessage = "1. Reading file...";
-        var fileContent = await _fileHandler.ReadFileByLinesAsync(FilePath, progress, token);
+        var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, token);
         InfoMessage += "Done";
 
         InfoMessage += "\n2. Processing file...";
@@ -122,8 +113,8 @@ public partial class MainWindowViewModel
 
     private void ProcessFileContent(string fileContent)
     {
-        var singleWords = _textProcessor.SeparateTextToSingleWords(fileContent);
-        var wordsWithOccurrences = _textProcessor.CountWordsOccurrences(singleWords);
+        var singleWords = TextProcessor.SeparateTextToSingleWords(fileContent);
+        var wordsWithOccurrences = TextProcessor.CountWordsOccurrences(singleWords);
 
         TextFileResults = wordsWithOccurrences.ToTextFileResults();
     }
