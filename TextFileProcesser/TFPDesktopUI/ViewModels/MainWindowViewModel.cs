@@ -42,15 +42,13 @@ public partial class MainWindowViewModel
             Filter = "Text documents (.txt)|*.txt"
         };
 
-        var isFileChosen = dialog.ShowDialog();
-
-        if (isFileChosen == false) return;
+        if (dialog.ShowDialog() == false) return;
 
         FilePath = dialog.FileName;
     }
 
     [RelayCommand(IncludeCancelCommand = true)]
-    private async Task Analyze(CancellationToken token)
+    private async Task Analyze(CancellationToken ct)
     {
         ResetProperties();
   
@@ -65,11 +63,11 @@ public partial class MainWindowViewModel
 
         try
         {
-            await FileParsing(progress, token);
+            await ParseSelectedFile(progress, ct);
         }
         catch (OperationCanceledException)
         {
-            InfoMessage = "File parsing was canceled.";
+            InfoMessage += " Operation was canceled.";
         }
         catch (IOException exception)
         {
@@ -92,7 +90,7 @@ public partial class MainWindowViewModel
         TextFileResults = new List<TextFileResult>();
     }
 
-    private async Task FileParsing(IProgress<int> progress, CancellationToken token)
+    private async Task ParseSelectedFile(IProgress<int> progress, CancellationToken ct)
     {
         var fileLinesCount = FileHandler.CountNumberOfLinesInFile(FilePath);
 
@@ -102,20 +100,50 @@ public partial class MainWindowViewModel
             return;
         }
 
-        InfoMessage = "1. Reading file...";
-        var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, token);
-        InfoMessage += "Done";
+        var fileContent = await ProcessFileReadingStep(progress, ct);
+        var singleWords = await ProcessTextSeparationStep(fileContent, progress, ct);
+        var wordsWithOccurrences = await ProcessCountingStep(singleWords, progress, ct);
+        var descendingResults = await ProcessResultPreparationStep(wordsWithOccurrences, progress, ct);
 
-        InfoMessage += "\n2. Processing file...";
-        await Task.Run(() => ProcessFileContent(fileContent), token);
-        InfoMessage += "Done";
+        TextFileResults = descendingResults.ToTextFileResults();
     }
 
-    private void ProcessFileContent(string fileContent)
+    private async Task<string> ProcessFileReadingStep(IProgress<int> progress, CancellationToken ct)
     {
-        var singleWords = TextProcessor.SeparateTextToSingleWords(fileContent);
-        var wordsWithOccurrences = TextProcessor.CountWordsOccurrences(singleWords);
+        InfoMessage = "1. Reading file ... ";
+        var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, ct);
+        InfoMessage += "Done";
 
-        TextFileResults = wordsWithOccurrences.ToTextFileResults();
+        return fileContent;
+    }
+
+    private async Task<string[]> ProcessTextSeparationStep(string fileContent, IProgress<int> progress, CancellationToken ct)
+    {
+        InfoMessage += "\n2. Separating to single words ... ";
+        var singleWords = await Task.Run(() => TextProcessor.SeparateTextToSingleWords(fileContent), ct);
+        InfoMessage += "Done";
+        progress.Report(93);
+
+        return singleWords;
+    }
+
+    private async Task<Dictionary<string, int>> ProcessCountingStep(string[] singleWords, IProgress<int> progress, CancellationToken ct)
+    {
+        InfoMessage += "\n3. Counting unique words ... ";
+        var wordsWithOccurrences = await Task.Run(() => TextProcessor.CountWordsOccurrences(singleWords), ct);
+        InfoMessage += "Done";
+        progress.Report(98);
+
+        return wordsWithOccurrences;
+    }
+
+    private async Task<(string, int)[]> ProcessResultPreparationStep(IDictionary<string, int> wordsWithOccurrences, IProgress<int> progress, CancellationToken ct)
+    {
+        InfoMessage += "\n4. Preparing results in descending order ... ";
+        var descendingResults = await Task.Run(() => TextProcessor.ConvertToDescendingArray(wordsWithOccurrences), ct);
+        InfoMessage += "Done";
+        progress.Report(100);
+
+        return descendingResults;
     }
 }

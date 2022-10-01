@@ -14,7 +14,7 @@ public static class FileHandler
             while (stream.Position < stream.Length)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(100), ct);
-                progress.Report((int) ((stream.Position * 100) / stream.Length));
+                progress.Report((int) ((stream.Position * 100) / stream.Length * 0.75));
             }
         }, ct);
 
