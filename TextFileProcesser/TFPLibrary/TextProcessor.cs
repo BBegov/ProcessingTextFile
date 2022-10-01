@@ -6,12 +6,13 @@ public static class TextProcessor
 {
     public static string[] SeparateTextToSingleWords(string text, string delimiter = " ")
     {
-        return CleanText(text)
+        return text
+            .CleanText()
             .Split(delimiter)
             .ToArray();
     }
 
-    private static string CleanText(string text)
+    private static string CleanText(this string text)
     {
         return text.Length == 0 
             ? string.Empty 
