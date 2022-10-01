@@ -2,17 +2,16 @@
 
 namespace TFPLibrary;
 
-public static class TextProcessor
+public class TextProcessor : ITextProcessor
 {
-    public static string[] SeparateTextToSingleWords(string text, string delimiter = " ")
+    public string[] SeparateTextToSingleWords(string text, string delimiter = " ")
     {
-        return text
-            .CleanText()
+        return CleanText(text)
             .Split(delimiter)
             .ToArray();
     }
 
-    public static string CleanText(this string text)
+    private static string CleanText(string text)
     {
         return text.Length == 0 
             ? string.Empty 
@@ -21,7 +20,7 @@ public static class TextProcessor
                 .Trim();
     }
 
-    public static (string, int)[] CountWordsOccurrences(string[] words)
+    public (string, int)[] CountWordsOccurrences(string[] words)
     {
         var wordsAndCounts = new Dictionary<string, int>();
 

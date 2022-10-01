@@ -1,12 +1,14 @@
-﻿using TFPDesktopUI.ViewModels;
+﻿using System.Windows;
+using TFPDesktopUI.ViewModels;
+using TFPLibrary;
 
 namespace TFPDesktopUI.Views;
 
-public partial class MainWindow
+public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(IFileHandler fileHandler, ITextProcessor textProcessor)
     {
         InitializeComponent();
-        DataContext = new MainWindowViewModel();
+        DataContext = new MainWindowViewModel(fileHandler, textProcessor);
     }
 }

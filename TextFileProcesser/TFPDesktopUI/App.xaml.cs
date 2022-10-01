@@ -2,10 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TFPDesktopUI.Views;
+using TFPLibrary;
 
 namespace TFPDesktopUI;
 
-public partial class App
+public partial class App : Application
 {
     public static IHost? AppHost { get; private set; }
 
@@ -15,6 +16,8 @@ public partial class App
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton<MainWindow>();
+                services.AddTransient<IFileHandler, FileHandler>();
+                services.AddTransient<ITextProcessor, TextProcessor>();
             })
             .Build();
     }
