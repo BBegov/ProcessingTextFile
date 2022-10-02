@@ -37,7 +37,6 @@ public partial class MainWindowViewModel
 
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            FileName = "Document",
             DefaultExt = ".txt",
             Filter = "Text documents (.txt)|*.txt"
         };
