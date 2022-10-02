@@ -13,7 +13,7 @@ public static class FileHandler
         {
             while (stream.Position < stream.Length)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(100), ct);
+                await Task.Delay(TimeSpan.FromMilliseconds(10), ct);
                 progress.Report((int) ((stream.Position * 100) / stream.Length * 0.75));
             }
         }, ct);
@@ -25,6 +25,6 @@ public static class FileHandler
 
     public static int CountNumberOfLinesInFile(string filePath)
     {
-        return (int) File.ReadLines(filePath).Count();
+        return File.ReadLines(filePath).Count();
     }
 }
