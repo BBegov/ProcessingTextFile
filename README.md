@@ -32,7 +32,7 @@ modular and reusable. This is because this logic is intended to be reused in a f
  
 As an example, the attached Sample.txt can be used. Considering following input:
 
-1:1 Adam Seth Enos
+1:1 Adam Seth Enos  
 1:2 Cainan Adam Seth Iared
 
 the program should display the table content below
