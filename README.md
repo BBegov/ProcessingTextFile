@@ -1,17 +1,10 @@
-### Editorial comment:
-THis project is under development. Having enough time I continuously improve the application.
+# ProcessingTextFile
+Counts the unique words - separated by spaces - in a specified text file and presents the result ordered by number of occurrences
 
 ---
-
-# ProcessingTextFile
-Counts the words in a specified text file and presents ordered by number of occurrences
-
-
 The purpose of this example is to demonstrate an approach for solving a problem for an actual user.
 Below, there is a description of the scenario with some of the technical requirements as well. 
-However, it is up to you to choose how are you going to solve the problem and how the final 
-technical solution (the application) is going to look like. 
-Quality of the solution (e.g. code quality) is important.
+---
 
 ### Scenario ###
 
