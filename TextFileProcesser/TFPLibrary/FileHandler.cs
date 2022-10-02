@@ -25,6 +25,6 @@ public static class FileHandler
 
     public static int CountNumberOfLinesInFile(string filePath)
     {
-        return (int) File.ReadLines(filePath).Count();
+        return File.ReadLines(filePath).Count();
     }
 }
