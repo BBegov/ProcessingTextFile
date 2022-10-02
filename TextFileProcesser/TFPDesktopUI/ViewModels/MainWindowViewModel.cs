@@ -120,7 +120,7 @@ public partial class MainWindowViewModel
     private async Task<string[]> ProcessTextSeparationStep(string fileContent, IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n2. Separating to single words ... ";
-        var singleWords = await Task.Run(() => TextProcessor.SeparateTextToSingleWords(fileContent), ct);
+        var singleWords = await Task.Run(() => TextProcessor.SplitTextBySpace(fileContent), ct);
         InfoMessage += "Done";
         progress.Report(93);
 

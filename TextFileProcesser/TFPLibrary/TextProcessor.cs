@@ -4,14 +4,14 @@ namespace TFPLibrary;
 
 public static class TextProcessor
 {
-    public static string[] SeparateTextToSingleWords(string text, string delimiter = " ")
+    public static string[] SplitTextBySpace(string text)
     {
-        return text.CleanText().Split(delimiter);
+        return text.ReduceWhiteSpacesToSingle().Split(" ");
     }
 
-    private static string CleanText(this string text)
+    private static string ReduceWhiteSpacesToSingle(this string text)
     {
-        return text.Length == 0
+        return string.IsNullOrEmpty(text)
             ? string.Empty
             : Regex.Replace(text, @"\s+", " ").Trim();
     }
@@ -38,4 +38,3 @@ public static class TextProcessor
             .ToArray();
     }
 }
-
