@@ -71,7 +71,9 @@ public partial class MainWindowViewModel
         catch (IOException exception)
         {
             InfoMessage =
-                $"An exception occurred:\nError code: {exception.HResult & 0x0000FFFF}\nMessage: {exception.Message}";
+                "An exception occurred:\n" +
+                $"Error code: {exception.HResult & 0x0000FFFF}\n" +
+                $"Message: {exception.Message}";
         }
     }
 
