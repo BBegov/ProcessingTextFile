@@ -7,7 +7,7 @@
         mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
         FontSize="20"
-        Title="MainWindow" Height="720" Width="1280">
+        Title="Text Processing App" Height="720" Width="1280">
 
     <Window.Resources>
         <Style TargetType="TextBlock">
