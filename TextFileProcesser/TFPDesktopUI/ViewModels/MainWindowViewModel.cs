@@ -101,15 +101,15 @@ public partial class MainWindowViewModel
             return;
         }
 
-        var fileContent = await ProcessFileReadingStep(progress, ct);
-        var singleWords = await ProcessTextSeparationStep(fileContent, progress, ct);
-        var wordsWithOccurrences = await ProcessCountingStep(singleWords, progress, ct);
-        var descendingResults = await ProcessResultPreparationStep(wordsWithOccurrences, progress, ct);
+        var fileContent = await ReadFile(progress, ct);
+        var singleWords = await SeparateText(fileContent, progress, ct);
+        var wordsWithOccurrences = await CountUniqueWords(singleWords, progress, ct);
+        var descendingResults = await PrepareResult(wordsWithOccurrences, progress, ct);
 
         TextFileResults = descendingResults.ToTextFileResults();
     }
 
-    private async Task<string> ProcessFileReadingStep(IProgress<int> progress, CancellationToken ct)
+    private async Task<string> ReadFile(IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage = "1. Reading file ... ";
         var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, ct);
@@ -118,7 +118,7 @@ public partial class MainWindowViewModel
         return fileContent;
     }
 
-    private async Task<string[]> ProcessTextSeparationStep(string fileContent, IProgress<int> progress, CancellationToken ct)
+    private async Task<string[]> SeparateText(string fileContent, IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n2. Separating to single words ... ";
         var singleWords = await Task.Run(() => TextProcessor.SplitTextBySpace(fileContent), ct);
@@ -128,7 +128,7 @@ public partial class MainWindowViewModel
         return singleWords;
     }
 
-    private async Task<Dictionary<string, int>> ProcessCountingStep(string[] singleWords, IProgress<int> progress, CancellationToken ct)
+    private async Task<Dictionary<string, int>> CountUniqueWords(string[] singleWords, IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n3. Counting unique words ... ";
         var wordsWithOccurrences = await Task.Run(() => TextProcessor.CountWordsOccurrences(singleWords), ct);
@@ -138,7 +138,7 @@ public partial class MainWindowViewModel
         return wordsWithOccurrences;
     }
 
-    private async Task<(string, int)[]> ProcessResultPreparationStep(IDictionary<string, int> wordsWithOccurrences, IProgress<int> progress, CancellationToken ct)
+    private async Task<(string, int)[]> PrepareResult(IDictionary<string, int> wordsWithOccurrences, IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n4. Preparing results in descending order ... ";
         var descendingResults = await Task.Run(() => TextProcessor.ConvertToDescendingArray(wordsWithOccurrences), ct);
