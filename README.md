@@ -37,14 +37,15 @@ As an example, the attached Sample.txt can be used. Considering following input:
 
 the program should display the table content below
 
-Word	Occurrence
-Adam	2
-Seth	2
-1:1	    1
-Enos	1
-1:2	    1
-Cainan	1
-Iared	1
+| Word | Occurrence |
+| --- | --- |
+| Adam | 2 |
+| Seth | 2 |
+| 1:1 | 1 |
+| Enos | 1 |
+| 1:2 | 1 |
+| Cainan | 1 |
+| Iared | 1 |
 
 * When sending the source code, please delete the generated temporary and/or binary files from the
 solution to ensure that our mail system accepts the attachment 
