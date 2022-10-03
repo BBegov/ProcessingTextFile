@@ -46,8 +46,3 @@ the program should display the table content below
 | 1:2 | 1 |
 | Cainan | 1 |
 | Iared | 1 |
-
-* When sending the source code, please delete the generated temporary and/or binary files from the
-solution to ensure that our mail system accepts the attachment 
-(e.g. “bin” and “obj” folders for C# solution). In case of any issues, please share the solution 
-using some of the available platforms (e.g. GitHub, Google Drive, Dropbox, or similar).
