@@ -109,39 +109,44 @@ public partial class MainWindowViewModel
         TextFileResults = descendingResults.ToTextFileResults();
     }
 
-    private async Task<string> ReadFile(IProgress<int> progress, CancellationToken ct)
+    private async Task<string[]> ReadFile(IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage = "1. Reading file ... ";
-        var fileContent = await FileHandler.ReadFileByLinesAsync(FilePath, progress, ct);
+        var fileContent = 
+            await FileHandler.ReadFileByLinesAsync(FilePath, progress, ct);
         InfoMessage += "Done";
 
         return fileContent;
     }
 
-    private async Task<string[]> SeparateText(string fileContent, IProgress<int> progress, CancellationToken ct)
+    private async Task<string[]> SeparateText(string[] fileContent, 
+        IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n2. Separating to single words ... ";
-        var singleWords = await Task.Run(() => TextProcessor.SplitTextBySpace(fileContent), ct);
+        var singleWords = 
+            await TPFService.SeparateToWords(fileContent, progress, ct);
         InfoMessage += "Done";
-        progress.Report(93);
 
         return singleWords;
     }
 
-    private async Task<Dictionary<string, int>> CountUniqueWords(string[] singleWords, IProgress<int> progress, CancellationToken ct)
+    private async Task<Dictionary<string, int>> CountUniqueWords(string[] singleWords, 
+        IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n3. Counting unique words ... ";
-        var wordsWithOccurrences = await Task.Run(() => TextProcessor.CountWordsOccurrences(singleWords), ct);
+        var wordsWithOccurrences = 
+            await TPFService.CountWordsOccurrences(singleWords, progress, ct);
         InfoMessage += "Done";
-        progress.Report(98);
 
         return wordsWithOccurrences;
     }
 
-    private async Task<(string, int)[]> PrepareResult(IDictionary<string, int> wordsWithOccurrences, IProgress<int> progress, CancellationToken ct)
+    private async Task<(string, int)[]> PrepareResult(Dictionary<string, int> wordsWithOccurrences, 
+        IProgress<int> progress, CancellationToken ct)
     {
         InfoMessage += "\n4. Preparing results in descending order ... ";
-        var descendingResults = await Task.Run(() => TextProcessor.ConvertToDescendingArray(wordsWithOccurrences), ct);
+        var descendingResults = 
+            await TPFService.ConvertToDescendingArray(wordsWithOccurrences, progress, ct);
         InfoMessage += "Done";
         progress.Report(100);
 
