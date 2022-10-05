@@ -3,7 +3,7 @@ using TFPLibrary.Models;
 
 namespace TFPLibrary;
 
-public static class TextProcessor
+internal static class TextProcessor
 {
     internal static async Task ReportProgressAsync(IReportProgress progressModel, 
         IProgress<int> progress, CancellationToken ct)
