@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,6 +75,12 @@ public partial class MainWindowViewModel
                 "An exception occurred:\n" +
                 $"Error code: {exception.HResult & 0x0000FFFF}\n" +
                 $"Message: {exception.Message}";
+        }
+        catch (InvalidEnumArgumentException exception)
+        {
+            InfoMessage = 
+                "An exception occurred during file parsing:\n" + 
+                $"ˇMessage: {exception.Message}";
         }
     }
 
