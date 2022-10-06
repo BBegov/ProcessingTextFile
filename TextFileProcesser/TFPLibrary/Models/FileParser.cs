@@ -19,13 +19,14 @@ internal class FileParser : ParserBase
 
     private async Task SplitTextBySpaceAsync(IEnumerable<string> textLines)
     {
+        ProcessingStep = ProcessingSteps.SplittingStep;
         ProgressModel.Lines = textLines.ToList();
 
         var splittingTask = Task.Run(() =>
         {
             ProgressModel.Words.AddRange(ProgressModel.Lines.SelectMany(line =>
             {
-                ProgressModel.ProgressedLines.Add(line);
+                ProgressModel.ProgressedLines++;
                 return line.ReduceWhiteSpacesToSingle().Split(" ");
             }));
         }, Ct);
@@ -33,7 +34,6 @@ internal class FileParser : ParserBase
         var reportingTask = ReportProgressAsync();
 
         await Task.WhenAll(splittingTask, reportingTask);
-
         ProgressModel.UniqueWordsSet = ProgressModel.Words.ToHashSet();
     }
 

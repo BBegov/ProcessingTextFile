@@ -4,7 +4,7 @@ public class ProgressReportingModel
 {
     public List<string> Lines { get; set; } = new();
     public List<string> Words { get; set; } = new();
-    public HashSet<string> ProgressedLines { get; set; } = new();
+    public int ProgressedLines { get; set; }
     public Dictionary<string, int> WordsAndCounts { get; set; } = new();
     public HashSet<string> UniqueWordsSet { get; set; } = new();
     public List<(string, int)> UnorderedResultList { get; set; } = new();
@@ -12,11 +12,11 @@ public class ProgressReportingModel
     
     public int ReportProgress1() => Lines.Count == 0
         ? 0
-        : ProgressedLines.Count * 100 / Lines.Count;
+        : ProgressedLines * 100 / Lines.Count;
     
-    public int ReportProgress2() => WordsAndCounts.Count == 0
+    public int ReportProgress2() => UniqueWordsSet.Count == 0
         ? 0
-        : UniqueWordsSet.Count * 100 / WordsAndCounts.Count;
+        : WordsAndCounts.Count * 100 / UniqueWordsSet.Count;
 
     public int ReportProgress3() => WordsAndCounts.Count == 0
         ? 0
